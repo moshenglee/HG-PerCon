@@ -13,7 +13,6 @@ from torch.utils.data import DataLoader, TensorDataset, RandomSampler
 from tqdm import tqdm
 from torch import nn
 from data_loader import InteractionDataSet
-from gat import PerGAT
 import torch.nn.functional as F
 torch.set_default_tensor_type(torch.DoubleTensor)
 
@@ -45,7 +44,7 @@ parser.add_argument(
 parser.add_argument(
     '--pkl-dir', type=str, default='00', help="Model file directory.")
 parser.add_argument(
-    '--train-ratio', type=float, default=0.5, help="Training ratio (0, 1).")
+    '--train-ratio', type=float, default=0.8, help="Training ratio (0, 1).")
 parser.add_argument(
     '--valid-ratio', type=float, default=0.25, help="Training ratio (0, 1).")
 parser.add_argument(
@@ -124,28 +123,6 @@ def _get_info_nce_loss(embeddings1, embeddings2):
     loss = loss.sum()
     return loss
 
-
-def get_k_fold_data(k, i, X, y):
-    # 返回第i折交叉验证时所需要的训练和验证数据，分开放，X_train为训练数据，X_valid为验证数据
-    assert k > 1
-    fold_size = X.shape[0] // k  # 每份的个数:数据总条数/折数（组数）
-
-    X_train, y_train = None, None
-    X_valid, y_valid = None, None
-
-    for j in range(k):
-        idx = slice(j * fold_size, (j + 1) * fold_size)  # slice(start,end,step)切片函数
-        # idx 为每组 valid
-        X_part, y_part = X[idx, :], y[idx]
-        if j == i:  # 第i折作valid
-            X_valid, y_valid = X_part, y_part
-        elif X_train is None:
-            X_train, y_train = X_part, y_part
-        else:
-            X_train = torch.cat((X_train, X_part), dim=0)  # dim=0增加行数，竖着连接
-            y_train = torch.cat((y_train, y_part), dim=0)
-    # print(X_train.size(),X_valid.size())
-    return X_train, y_train, X_valid, y_valid
 
 
 def train(train_loader, valid_loader, model, optimizer, loss_fn, valid):
@@ -415,9 +392,6 @@ if args.cuda:
     word_feature = word_feature.cuda()
 
 
-
-valid_ratio = 0.25
-
 train_x, test_x, train_y, test_y = train_test_split(X, y,
                                                     random_state=args.seed,
                                                     test_size=1 - args.train_ratio)
@@ -457,7 +431,7 @@ model = JointModel(
     word_feature=word_feature,
     pern_adj=pern_pern_adj,
     word_pern_adj=word_pern_adj,
-    embed_size2 = 2304,
+    embed_size2 = 768,
     n_units=n_units, n_heads=n_heads,
     word_dim=word_dim, user_dim=user_dim,
     dropout=args.dropout)
