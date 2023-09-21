@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# @Time    : 2020/10/12 20:00
-# @Author  : lhz
+# @Author  : lml
 # @File    : my_gat_layer.py
 # @Software: PyCharm
 
