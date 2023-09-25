@@ -134,8 +134,8 @@ def train(train_loader, valid_loader, model, optimizer, loss_fn, valid):
         # user_word_adj, sentence_emb, labels = batch
         user,labels = batch
 
-        user_word_adj = user[:,:-2304]
-        sentence_emb = user[:,-2304:]
+        user_word_adj = user[:,:-46080]
+        sentence_emb = user[:,-46080:]
         # print(user_word_adj.shape)
         # print(sentence_emb.shape)
         bs = user_word_adj.size(0)
@@ -177,8 +177,8 @@ def train(train_loader, valid_loader, model, optimizer, loss_fn, valid):
         for _, batch in enumerate(valid_loader):
             user,labels = batch
 
-            user_word_adj = user[:,:-2304]
-            sentence_emb = user[:,-2304:]
+            user_word_adj = user[:,:-46080]
+            sentence_emb = user[:,-46080:]
             # user_word_adj, sentence_emb, labels = batch
             bs = user_word_adj.size(0)
             if args.cuda:
@@ -210,8 +210,8 @@ def compute_test(test_loader):
         # user_word_adj, labels = batch
         user,labels = batch
 
-        user_word_adj = user[:,:-2304]
-        sentence_emb = user[:,-2304:]
+        user_word_adj = user[:,:-46080]
+        sentence_emb = user[:,-46080:]
         bs = user_word_adj.size(0)
 
         if args.cuda:
@@ -277,7 +277,7 @@ def k_fold_train(k):
             word_feature=word_feature,
             pern_adj=pern_pern_adj,
             word_pern_adj=word_pern_adj,
-            embed_size2 = pern_feature*768,
+            embed_size2 = 768,
             n_units=n_units, n_heads=n_heads,
             word_dim=word_dim, user_dim=user_dim,
             dropout=args.dropout)
@@ -355,7 +355,7 @@ word_dim, user_dim = [int(x) for x in args.feature_size.strip().split(",")]
 n_units = [int(x) for x in args.hidden_units.strip().split(",")]
 
 
-# user_bert.shape [N ,n*bert.shape 2304]
+# user_bert.shape [N ,n*bert.shape -46080]
 user_bert = np.loadtxt("input/youtube_bert.txt")
 # user_bert = np.loadtxt("input/pan_bert.txt")
 # user_bert = np.loadtxt("input/my_bert_embedding.txt")
@@ -371,7 +371,7 @@ X1 = dataset.get_user_word_adj()
 X = torch.cat((torch.tensor(X1),torch.tensor(user_bert)),1)
 print("X.shape")
 print(X.shape)
-# X. shape  [N,  2393 (2304+89)]
+# X. shape  [N,  2393 (-46080+89)]
 print("======0000=====")
 y = dataset.get_labels()
 word_pern_adj = torch.tensor(word_pern_adj)

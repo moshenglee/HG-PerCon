@@ -36,8 +36,10 @@ class PerCon(nn.Module):
         self.gat2_wp = MultiHeadGraphAttention(n_heads[1], f_in=n_units[1] * n_heads[1],
                                                f_out=n_units[2], attn_dropout=attn_dropout)
         # self.fc = nn.Linear(n_units[-1], 5)
+        self.pt = TransformerEncoder(input_dim=3072, hidden_dim=embed_size2, num_layers=2, num_heads=8, dropout_rate=0.1)
 
-        self.pt = TransformerEncoder(input_dim=768, hidden_dim=embed_size2, num_layers=2, num_heads=1, dropout_rate=0.1)
+
+
         # self.fc1 = nn.Linear(640, 128)
         self.fc1 = nn.Linear(256, 128)
         self.fc2 = nn.Linear(embed_size2, 128)
@@ -78,9 +80,10 @@ class PerCon(nn.Module):
         # output1 shape[]
 
         # x2 shape [N, m (post count), bert.shape]
-
+        sentence_embed = sentence_embed.reshape(n_p,-1,3072)
         sentence_embed = self.pt(sentence_embed)
         sentence_embed = torch.mean(sentence_embed, dim=1)
+        sentence_embed = sentence_embed.reshape(n_p,768)
 
 
         output2 = self.fc2(sentence_embed)
@@ -118,13 +121,6 @@ class FinetuneModel(nn.Module):
     def forward(self, x1, x2):
         output1, output2, output1_new, output2_new,attn_pp, attn_wp, x = self.pretrain_model(x1,x2)
         # x2 = self.pretrain_model(x2)
-        # print(output1)
-        # print(output2)
-        # print("sdasdasdas")
-        # print(output1.shape)
-        # print(output2.shape)
-        # print(output1.is_cuda)
-        # print(output2.is_cuda)
         output1 = output1.to(device)
         output2 = output2.to(device)
         output1_new = output1_new.to(device)
@@ -165,6 +161,7 @@ class JointModel(nn.Module):
         # self.fc = nn.Linear(n_units[-1], 5)
 
         # self.fc1 = nn.Linear(640, 128)
+        self.pt =  TransformerEncoder(input_dim=3072, hidden_dim=embed_size2, num_layers=2, num_heads=8, dropout_rate=0.1)
         self.share1 = nn.Linear(256, 128)
         self.share2 = nn.Linear(embed_size2, 128)
         self.fc1 = nn.Linear(128, 64)
@@ -216,6 +213,11 @@ class JointModel(nn.Module):
         # x2 shape [N, 4* (post count), bert.shape]
         # x2 = torch.flatten(sentence_embed, 1)
         # x2 shape [N, m (post count)* bert.shape]
+        sentence_embed = sentence_embed.reshape(n_p,-1,3072)
+        sentence_embed = self.pt(sentence_embed)
+        sentence_embed = torch.mean(sentence_embed, dim=1)
+        sentence_embed = sentence_embed.reshape(n_p,768)
+
         output2 = self.share2(sentence_embed)
         # task1_output1, task1_output2 = self.task1_layer(output1,output2)
         output1_new = self.fc1(output1)

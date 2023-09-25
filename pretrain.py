@@ -77,8 +77,8 @@ def train(train_loader, valid_loader, model, optimizer, loss_fn, valid):
         user,labels = batch
         # print("user_word_adj")
 
-        user_word_adj = user[:,:-768]
-        sentence_emb = user[:,-768:]
+        user_word_adj = user[:,:-46080]
+        sentence_emb = user[:,-46080:]
 
 
         # print(user_word_adj.shape)
@@ -112,8 +112,8 @@ def train(train_loader, valid_loader, model, optimizer, loss_fn, valid):
             user,labels = batch
 
 
-            user_word_adj = user[:,:-768]
-            sentence_emb = user[:,-768:]
+            user_word_adj = user[:,:-46080]
+            sentence_emb = user[:,-46080:]
 
 
             # user_word_adj, sentence_emb, labels = batch
@@ -151,8 +151,8 @@ def train2(train_loader, valid_loader, model, optimizer, loss_fn, valid):
         user,labels = batch
 
 
-        user_word_adj = user[:,:-768]
-        sentence_emb = user[:,-768:]
+        user_word_adj = user[:,:-46080]
+        sentence_emb = user[:,-46080:]
 
 
         bs = user_word_adj.size(0)
@@ -198,8 +198,8 @@ def train2(train_loader, valid_loader, model, optimizer, loss_fn, valid):
             user,labels = batch
 
 
-            user_word_adj = user[:,:-768]
-            sentence_emb = user[:,-768:]
+            user_word_adj = user[:,:-46080]
+            sentence_emb = user[:,-46080:]
 
             bs = user_word_adj.size(0)
 
@@ -254,8 +254,8 @@ def compute_test(test_loader):
         # user_word_adj, labels = batch
         user,labels = batch
 
-        user_word_adj = user[:,:-768]
-        sentence_emb = user[:,-768:]
+        user_word_adj = user[:,:-46080]
+        sentence_emb = user[:,-46080:]
 
         bs = user_word_adj.size(0)
 
