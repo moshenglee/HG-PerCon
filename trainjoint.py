@@ -499,8 +499,7 @@ print('best_val_loss:', best_val)
 '''
 Restore best model for testing
 '''
-# 取 youtube_new模型的最佳epoch
-# best_epoch = 64
+
 
 print('Loading {}th epoch'.format(best_epoch))
 model.load_state_dict(torch.load(os.path.join(args.pkl_dir, '{}.pkl'.format(best_epoch))))
