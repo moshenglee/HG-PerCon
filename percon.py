@@ -36,7 +36,7 @@ class PerCon(nn.Module):
         self.gat2_wp = MultiHeadGraphAttention(n_heads[1], f_in=n_units[1] * n_heads[1],
                                                f_out=n_units[2], attn_dropout=attn_dropout)
         # self.fc = nn.Linear(n_units[-1], 5)
-        self.pt = TransformerEncoder(input_dim=3072, hidden_dim=embed_size2, num_layers=2, num_heads=8, dropout_rate=0.1)
+        self.pt = TransformerEncoder(input_dim=3072, hidden_dim=embed_size2, num_layers=1, num_heads=8, dropout_rate=0.1)
 
 
 
@@ -161,7 +161,7 @@ class JointModel(nn.Module):
         # self.fc = nn.Linear(n_units[-1], 5)
 
         # self.fc1 = nn.Linear(640, 128)
-        self.pt =  TransformerEncoder(input_dim=3072, hidden_dim=embed_size2, num_layers=2, num_heads=8, dropout_rate=0.1)
+        self.pt =  TransformerEncoder(input_dim=3072, hidden_dim=embed_size2, num_layers=1, num_heads=8, dropout_rate=0.1)
         self.share1 = nn.Linear(256, 128)
         self.share2 = nn.Linear(embed_size2, 128)
         self.fc1 = nn.Linear(128, 64)
