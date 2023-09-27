@@ -440,8 +440,6 @@ if args.cuda:
     model.cuda()
 
 params = [{'params': filter(lambda p: p.requires_grad, model.parameters())}]
-total_params = sum(p.numel() for p in model.parameters())
-print(f"Total parameters: {total_params}")
 
 optimizer = optim.Adam(params, lr=args.lr, weight_decay=args.weight_decay)
 if args.loss_fn == 'rmse':
